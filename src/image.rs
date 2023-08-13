@@ -196,7 +196,6 @@ pub fn test_circle() {
     let tu = vec3(0.4, 0.0, 0.5);
     let tv = vec3(0.0, 0.4, 0.5);
     let tw = vec3(0.0, 0.0, 1.0);
-    dbg!(tu, tv);
     buf.circle_absolute_transform(vec2(0.0, 0.0), tu, tv, tw, 1.0, 2, vec4(0.0, 1.0, 0.0, 1.0));
     buf.dump_to_file("test.png");
 }

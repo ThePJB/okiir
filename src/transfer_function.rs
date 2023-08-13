@@ -1,4 +1,4 @@
-use super::iir_t1::*;
+use super::iir::*;
 use crate::image::*;
 use crate::vector::*;
 
@@ -58,8 +58,6 @@ impl TransferFunction {
         // our input points are in one space and this plotting is expecting 0..1 ... so we need to flip y axis, include negative quadrants, and scale
         // todo a test for u and v transformations. maybe inverse will be correct. also print out poles and zeros
         let (zeros, poles) = self.pole_zero();
-        dbg!(&poles);
-        dbg!(&zeros);
         let mut buf = ImageBuffer::new(xres, yres);
         buf.fill(vec4(1.0, 1.0, 1.0, 1.0));
         let tu = vec3(0.4, 0.0, 0.5);

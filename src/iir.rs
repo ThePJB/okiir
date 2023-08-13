@@ -15,8 +15,9 @@ pub struct IIR {
 
 impl From<TransferFunction> for IIR {
     fn from(h: TransferFunction) -> Self {
-        let rb_input = VecDeque::from(vec![vec2(0.0, 0.0); h.numerator.coefficients.len()]);
-        let rb_output = VecDeque::from(vec![vec2(0.0, 0.0); h.denominator.coefficients.len()]);
+        let len = h.numerator.coefficients.len().max(h.denominator.coefficients.len());
+        let rb_input = VecDeque::from(vec![vec2(0.0, 0.0); len]);
+        let rb_output = VecDeque::from(vec![vec2(0.0, 0.0); len]);
         let a0 = h.numerator.coefficients[0];
         let h = TransferFunction {
             numerator: Polynomial::from(h.numerator.coefficients.iter().map(|c| *c / a0).collect::<Vec<Vec2>>()),
@@ -32,6 +33,21 @@ impl From<TransferFunction> for IIR {
 
 impl IIR {
     pub fn tick(&mut self, input: Vec2)-> Vec2 {
+        let mut input_sum = input;
+        for i in 1..self.h.denominator.coefficients.len() {
+            input_sum += self.h.denominator.coefficients[i]**self.rb_input.get(i-1).unwrap();
+        }
+        let mut output_sum = input_sum * self.h.numerator.coefficients[0];
+        for i in 1..self.h.numerator.coefficients.len() {
+            output_sum += self.h.numerator.coefficients[i]**self.rb_input.get(i-1).unwrap();
+
+        }
+        self.rb_input.push_front(input_sum);
+        self.rb_input.pop_back();
+
+        output_sum
+    }    
+    pub fn tick_old(&mut self, input: Vec2)-> Vec2 {
         let mut input_sum = vec2(0.0, 0.0);
         input_sum += input * self.h.numerator.coefficients[0];
         for i in 1..self.h.numerator.coefficients.len() {
@@ -86,19 +102,15 @@ pub fn test_2comb() {
     let q = TransferFunction::fb_comb(0.7, 220);
     q.plot_pole_zero("q_pz", 1000, 1000);
     q.plot_impulse_response("q", 10000, 1000, 1000);
-    dbg!(&q);
     let p = TransferFunction::fb_comb(0.7, 500);
     p.plot_pole_zero("p_pz", 1000, 1000);
     p.plot_impulse_response("p", 10000, 1000, 1000);
-    dbg!(&p);
     let s = q.clone() + p.clone();
     s.plot_pole_zero("s_pz", 1000, 1000);
-    dbg!(&s);
     s.plot_impulse_response("q_plus_p", 10000, 1000, 1000);
     run_and_output("qplusp", s);
     let s = q * p;
     s.plot_impulse_response("q_times_p", 10000, 1000, 1000);
-    dbg!(&s);
     run_and_output("qtimesp", s);
 }
 

@@ -45,7 +45,7 @@ FIR is an abstraction that won't hurt you, probably compose in code several FIR 
     * Direct form 2 promising stability-wise
     * My idea for cascaded single units. one pole one zero units.
     * What about entirely parallel units? thats weird right. But theres parallel biquads and series biquads.
-    * Biquad library
+    * Apparently biquads good (see rust biquad library)
     * maybe you can transform coefficients as well as pole locations with bilinear transform?
 
 
@@ -62,6 +62,8 @@ FIR is an abstraction that won't hurt you, probably compose in code several FIR 
 ### Pole Analysis
 * Poles at Nth roots of unity
 * Conjugate poles or not
+* Explore complex pole placement
+* Im sure that the delay and gain comb filter is cringe, and the root of unity phase shifterino pole filter is based...
 
 ### Upcoming Features
 * Interactive pole/zero editor
